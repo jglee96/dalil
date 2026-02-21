@@ -37,6 +37,17 @@ src/
     suggest/
       application/
         suggestion-generator.ts
+      interface/
+        cli/
+          suggest.command.ts
+    apply/
+      interface/
+        cli/
+          apply.command.ts
+    history/
+      interface/
+        cli/
+          history.command.ts
     export/
       application/
         export-markdown.use-case.ts
@@ -63,6 +74,6 @@ src/
 ## 6) Migration Plan
 1. Completed: split monolithic helpers into `shared/`, `features/`, `infrastructure/` modules.
 2. Completed: moved runner HTTP handlers and page field operations to `features/runner/interface/http` and `features/runner/application`.
-3. Next: split each CLI command into `features/*/interface/cli/*.command.ts`.
-4. Next: add architecture tests/lint rules for import direction.
+3. Completed: split suggest/apply/history CLI commands into `features/*/interface/cli/*.command.ts`.
+4. Next: split setup/vault/export commands from `main.ts` into feature-level command modules.
 5. Later: optional package split (`packages/domain`, `packages/application`, `apps/cli-runner`) when team/scale grows.
