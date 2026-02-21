@@ -31,9 +31,16 @@ src/
           run-tui.ts
         http/
           runner-server.ts
+    setup/
+      interface/
+        cli/
+          setup-commands.ts
     vault/
       application/
         profile-extraction.ts
+      interface/
+        cli/
+          vault.command.ts
     suggest/
       application/
         suggestion-generator.ts
@@ -51,6 +58,9 @@ src/
     export/
       application/
         export-markdown.use-case.ts
+      interface/
+        cli/
+          export.command.ts
 ```
 
 ## 3) Dependency Rules
@@ -75,5 +85,6 @@ src/
 1. Completed: split monolithic helpers into `shared/`, `features/`, `infrastructure/` modules.
 2. Completed: moved runner HTTP handlers and page field operations to `features/runner/interface/http` and `features/runner/application`.
 3. Completed: split suggest/apply/history CLI commands into `features/*/interface/cli/*.command.ts`.
-4. Next: split setup/vault/export commands from `main.ts` into feature-level command modules.
-5. Later: optional package split (`packages/domain`, `packages/application`, `apps/cli-runner`) when team/scale grows.
+4. Completed: split setup/vault/export commands from `main.ts` into feature-level command modules.
+5. Next: add architecture tests/lint rules for import direction.
+6. Later: optional package split (`packages/domain`, `packages/application`, `apps/cli-runner`) when team/scale grows.
