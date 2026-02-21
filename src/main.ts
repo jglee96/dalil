@@ -2,13 +2,12 @@
 
 import http, { IncomingMessage, ServerResponse } from "node:http";
 import { randomUUID, createHash } from "node:crypto";
-import { homedir, tmpdir } from "node:os";
+import { homedir } from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 import { spawnSync } from "node:child_process";
 import readline from "node:readline";
 import { Writable } from "node:stream";
-import { buildSimplePdf } from "./pdf";
 
 const SCHEMA_VERSION = "0.1.0";
 const RUNNER_DEFAULT_PORT = 48777;
@@ -1289,8 +1288,8 @@ function printHelp(): void {
   writeStdout("  dalil history search <query>");
   writeStdout("");
   writeStdout("Export");
-  writeStdout("  dalil export resume --lang ko|en --template <id> --out <path.docx|path.pdf>");
-  writeStdout("  dalil export portfolio --lang ko|en --template <id> --out <path.docx|path.pdf>");
+  writeStdout("  dalil export resume --lang ko|en --template <id> --out <path.md>");
+  writeStdout("  dalil export portfolio --lang ko|en --template <id> --out <path.md>");
 }
 
 async function cmdInit(rawArgs: string[], dataDirOverride?: string): Promise<void> {
@@ -2008,16 +2007,22 @@ async function cmdHistory(rawArgs: string[], dataDirOverride?: string): Promise<
   throw new CliError("Usage: dalil history list|show|search ...", EXIT_USAGE);
 }
 
-function composeExportText(vault: CareerVault, artifact: "resume" | "portfolio", lang: SuggestLang, template: string): string {
+function composeExportMarkdown(
+  vault: CareerVault,
+  artifact: "resume" | "portfolio",
+  lang: SuggestLang,
+  template: string,
+): string {
   const lines: string[] = [];
-  lines.push(`Dalil Export - ${artifact.toUpperCase()}`);
-  lines.push(`Generated: ${new Date().toISOString().slice(0, 10)}`);
-  lines.push(`Template: ${template}`);
-  lines.push(`Language: ${lang}`);
+  lines.push(`# Dalil ${artifact === "resume" ? "Resume" : "Portfolio"}`);
+  lines.push("");
+  lines.push(`- Generated: ${new Date().toISOString().slice(0, 10)}`);
+  lines.push(`- Template: ${template}`);
+  lines.push(`- Language: ${lang}`);
   lines.push("");
 
   if (vault.profile.identity.name) {
-    lines.push(vault.profile.identity.name);
+    lines.push(`## ${vault.profile.identity.name}`);
   }
   if (vault.profile.identity.email) {
     lines.push(vault.profile.identity.email);
@@ -2029,33 +2034,33 @@ function composeExportText(vault: CareerVault, artifact: "resume" | "portfolio",
 
   if (vault.profile.experience.length > 0) {
     lines.push("");
-    lines.push(lang === "ko" ? "경력" : "Experience");
+    lines.push(`## ${lang === "ko" ? "경력" : "Experience"}`);
     for (const item of vault.profile.experience) {
       lines.push(`- ${item.replace(/^[-•*\s]+/, "")}`);
     }
   }
   if (vault.profile.projects.length > 0) {
     lines.push("");
-    lines.push(lang === "ko" ? "프로젝트" : "Projects");
+    lines.push(`## ${lang === "ko" ? "프로젝트" : "Projects"}`);
     for (const item of vault.profile.projects) {
       lines.push(`- ${item.replace(/^[-•*\s]+/, "")}`);
     }
   }
   if (vault.profile.skills.length > 0) {
     lines.push("");
-    lines.push(lang === "ko" ? "기술 스택" : "Skills");
+    lines.push(`## ${lang === "ko" ? "기술 스택" : "Skills"}`);
     lines.push(vault.profile.skills.join(", "));
   }
   if (vault.profile.education.length > 0) {
     lines.push("");
-    lines.push(lang === "ko" ? "학력" : "Education");
+    lines.push(`## ${lang === "ko" ? "학력" : "Education"}`);
     for (const item of vault.profile.education) {
       lines.push(`- ${item.replace(/^[-•*\s]+/, "")}`);
     }
   }
   if (vault.profile.links.length > 0) {
     lines.push("");
-    lines.push("Links");
+    lines.push("## Links");
     for (const link of vault.profile.links) {
       lines.push(`- ${link}`);
     }
@@ -2063,32 +2068,11 @@ function composeExportText(vault: CareerVault, artifact: "resume" | "portfolio",
   return lines.join("\n");
 }
 
-function exportDocx(outPath: string, text: string): void {
-  if (!commandExists("textutil")) {
-    throw new CliError("DOCX export requires `textutil` (macOS).", EXIT_ENV);
-  }
-  const workDir = fs.mkdtempSync(path.join(tmpdir(), "dalil-export-"));
-  const txtPath = path.join(workDir, "export.txt");
-  fs.writeFileSync(txtPath, text, "utf8");
-  const result = spawnSync("textutil", ["-convert", "docx", "-output", outPath, txtPath], {
-    encoding: "utf8",
-  });
-  fs.rmSync(workDir, { recursive: true, force: true });
-  if (result.status !== 0) {
-    throw new CliError(`DOCX export failed: ${(result.stderr ?? "").trim()}`, EXIT_ENV);
-  }
-}
-
-function exportPdf(outPath: string, text: string): void {
-  const pdf = buildSimplePdf(text);
-  fs.writeFileSync(outPath, pdf);
-}
-
 async function cmdExport(rawArgs: string[], dataDirOverride?: string): Promise<void> {
   const args = [...rawArgs];
   const artifact = args.shift() as "resume" | "portfolio" | undefined;
   if (!artifact || (artifact !== "resume" && artifact !== "portfolio")) {
-    throw new CliError("Usage: dalil export resume|portfolio --lang ko|en --template <id> --out <path>", EXIT_USAGE);
+    throw new CliError("Usage: dalil export resume|portfolio --lang ko|en --template <id> --out <path.md>", EXIT_USAGE);
   }
   const lang = (takeOption(args, "--lang") ?? "ko") as SuggestLang;
   const template = takeOption(args, "--template");
@@ -2106,18 +2090,14 @@ async function cmdExport(rawArgs: string[], dataDirOverride?: string): Promise<v
   const vault = loadVault(dataDir);
   const outPath = path.resolve(outPathRaw);
   ensureDir(path.dirname(outPath));
-
-  const content = composeExportText(vault, artifact, lang, template);
   const ext = path.extname(outPath).toLowerCase();
-  if (ext === ".docx") {
-    exportDocx(outPath, content);
-  } else if (ext === ".pdf") {
-    exportPdf(outPath, content);
-  } else {
-    fs.writeFileSync(outPath, content, "utf8");
+  if (ext !== ".md" && ext !== ".markdown") {
+    throw new CliError("Markdown export only: use `--out <path.md>`.", EXIT_USAGE);
   }
+  const content = composeExportMarkdown(vault, artifact, lang, template);
+  fs.writeFileSync(outPath, content, "utf8");
 
-  writeStdout(`Exported ${artifact} to ${outPath}`);
+  writeStdout(`Exported ${artifact} markdown to ${outPath}`);
 }
 
 async function run(): Promise<void> {

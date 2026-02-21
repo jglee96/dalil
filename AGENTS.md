@@ -6,7 +6,7 @@ Dalil is an AI assistant that helps users complete company-specific application 
 
 **Hard limits (by design):** Dalil MUST NOT navigate between pages, click submit buttons, or trigger form submission. Dalil ONLY assists with drafting and inserting text.
 
-Dalil also provides **DOCX/PDF export** for resume and portfolio materials.
+Dalil also provides **Markdown export** for resume and portfolio materials.
 
 Dalil stores **application fill history** and a curated **Career Vault** (optimized resume/portfolio-derived profile) **locally only**, under a user-chosen directory.
 
@@ -20,7 +20,7 @@ For suggestion generation, Dalil uses the **OpenAI API** with a **user-provided 
 - Insert text into form fields safely and predictably (no unintended page actions).
 - Keep the user in control: review, edit, apply per field, and revert.
 - Support Korean first, with an architecture and UX that scales to global usage.
-- Export a clean resume/portfolio package as DOCX and PDF.
+- Export resume/portfolio content as Markdown for flexible downstream editing.
 - Store application-fill history for auditability and reuse.
 - Maintain an optimized, structured Career Vault for reuse across companies and languages.
 - Persist all data locally in a user-selected folder (no server-side storage by default).
@@ -65,7 +65,7 @@ A local component that owns:
 
 - The **Career Vault** (optimized, structured representation of the user’s career data).
 - The **Application History** store (what was drafted/applied, when, and where).
-- Document import/parsing (PDF/DOCX) and export (DOCX/PDF).
+- Document import/parsing (PDF/DOCX) and export (Markdown).
 - Suggestion generation via the **OpenAI API** using a **user-provided API key**.
 
 Dalil is primarily used as a **CLI**, similar to coding agents (e.g., Claude Code-style):
@@ -147,8 +147,8 @@ Dalil Core is exposed as:
 
 #### Export
 
-- `dalil export resume --lang ko|en --template <id> --out <path.docx|path.pdf>`
-- `dalil export portfolio --lang ko|en --template <id> --out <path.docx|path.pdf>`
+- `dalil export resume --lang ko|en --template <id> --out <path.md>`
+- `dalil export portfolio --lang ko|en --template <id> --out <path.md>`
 
 ### TUI entrypoints
 
@@ -206,7 +206,7 @@ Dalil Core is exposed as:
 
 1. User selects a template (KR/EN).
 2. Dalil composes content from the Candidate Profile.
-3. User previews and exports to DOCX and/or PDF.
+3. User previews and exports to Markdown.
 
 ### Flow D — Log application-fill history (local)
 
@@ -347,13 +347,11 @@ Dalil SHOULD:
 - Let the user lock critical facts (dates, titles, numbers) to prevent accidental rewriting.
 - Provide a “facts table” view for quick editing.
 
-### 8) Export (DOCX/PDF)
+### 8) Export (Markdown)
 
 Dalil MUST:
 
-- Export resume and portfolio as:
-  - DOCX
-  - PDF
+- Export resume and portfolio as Markdown (`.md`).
 - Support templates for:
   - Korean resume
   - English resume
@@ -746,8 +744,8 @@ Dalil SHOULD:
   - No navigation or submission actions occur.
 
 - Export:
-  - DOCX export opens correctly in Word.
-  - PDF export renders with consistent pagination.
+  - Markdown export is generated with stable sections/headings.
+  - Exported content is human-editable and reusable in downstream editors.
 
 - Local persistence:
   - Career Vault and history are created under the user-selected data directory.
@@ -773,7 +771,7 @@ When building with Codex, prioritize these milestones:
 2. CandidateProfile import + extraction pipeline (DOCX/PDF)
 3. Suggestion generation with hard limits + citations
 4. Apply/Revert mechanics across frameworks
-5. Export templates (DOCX → PDF)
+5. Export templates (Markdown)
 6. Security hardening (injection minimization, operation allowlist)
 7. **Dalil Core local storage (Career Vault + history) + data-directory enforcement**
 8. **Runner ↔ Core integration (loopback API) + permissions hardening**

@@ -30,5 +30,5 @@ node dist/main.js apply <fieldId> --suggestion <suggestionId>
 ## Notes
 
 - `run` requires Playwright (`npm i playwright`) for live browser operations.
-- DOCX export/import relies on macOS `textutil` when available.
-- PDF export is generated locally without third-party services.
+- Import supports PDF/DOCX/text notes for profile extraction.
+- Export is Markdown-only (`.md`) so users can freely reformat later.
