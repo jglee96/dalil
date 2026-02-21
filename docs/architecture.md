@@ -28,6 +28,7 @@ src/
       interface/
         cli/
           runner-commands.ts
+          run-tui.ts
         http/
           runner-server.ts
     vault/

@@ -19,6 +19,8 @@ node dist/main.js config set openai.key
 node dist/main.js run --mode managed
 ```
 
+`dalil run` starts Runner and opens an interactive keyboard TUI. Use `--daemon` to keep only the Runner process.
+
 From another terminal:
 
 ```bash

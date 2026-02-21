@@ -82,7 +82,7 @@ function printHelp(): void {
   writeStdout("  dalil init --data-dir <path>");
   writeStdout("  dalil config set openai.key");
   writeStdout("  dalil doctor");
-  writeStdout("  dalil run [--mode managed|attach] [--cdp <url>] [--port <n>]");
+  writeStdout("  dalil run [--mode managed|attach] [--cdp <url>] [--port <n>] [--daemon]");
   writeStdout("");
   writeStdout("Vault");
   writeStdout("  dalil vault import <file...> [--type resume|portfolio|notes]");

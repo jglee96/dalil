@@ -12,9 +12,11 @@ import {
   saveRunnerConnection,
 } from "../../../../infrastructure/persistence/local-store";
 import { runnerRequest, startRunnerServer } from "../http/runner-server";
+import { runInteractiveTui } from "./run-tui";
 
 export async function cmdRun(rawArgs: string[], dataDirOverride?: string): Promise<void> {
   const args = [...rawArgs];
+  const daemon = takeFlag(args, "--daemon");
   const modeValue = (takeOption(args, "--mode") ?? "managed") as Mode;
   if (modeValue !== "managed" && modeValue !== "attach") {
     throw new CliError("`--mode` must be managed or attach.", EXIT_USAGE);
@@ -47,7 +49,11 @@ export async function cmdRun(rawArgs: string[], dataDirOverride?: string): Promi
   writeStdout("Dalil Runner started.");
   writeStdout(`mode=${modeValue} port=${runner.port}`);
   writeStdout("Dalil fills text only. You submit manually.");
-  writeStdout("Keep this process running and use another terminal for CLI commands.");
+  if (!daemon && process.stdin.isTTY) {
+    writeStdout("Launching interactive TUI...");
+  } else {
+    writeStdout("Keep this process running and use another terminal for CLI commands.");
+  }
 
   let stopped = false;
   const stop = async (): Promise<void> => {
@@ -63,6 +69,15 @@ export async function cmdRun(rawArgs: string[], dataDirOverride?: string): Promi
       }
     }
   };
+
+  if (!daemon && process.stdin.isTTY) {
+    try {
+      await runInteractiveTui(dataDir);
+    } finally {
+      await stop();
+    }
+    return;
+  }
 
   process.on("SIGINT", () => {
     void stop().then(() => process.exit(0));
