@@ -32,3 +32,4 @@ node dist/main.js apply <fieldId> --suggestion <suggestionId>
 - `run` requires Playwright (`npm i playwright`) for live browser operations.
 - Import supports PDF/DOCX/text notes for profile extraction.
 - Export is Markdown-only (`.md`) so users can freely reformat later.
+- Architecture reference: `/Users/zakklee/dev/dalil/docs/architecture.md`
