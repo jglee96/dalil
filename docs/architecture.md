@@ -23,6 +23,7 @@ src/
       local-store.ts
   features/
     runner/
+      index.ts
       application/
         field-operations.ts
       interface/
@@ -42,6 +43,7 @@ src/
         cli/
           vault.command.ts
     suggest/
+      index.ts
       application/
         suggestion-generator.ts
       interface/
@@ -66,7 +68,7 @@ src/
 ## 3) Dependency Rules
 - `interface(main CLI/runner)` -> `features(application)` -> `shared(types/constants/errors)`
 - `infrastructure(persistence)` can be used by interface/application, but domain rules must not depend on Node process globals directly.
-- Feature modules must not import from other feature internals (only stable exports).
+- Feature modules must not import from other feature internals (only stable exports via `features/<name>/index.ts`).
 - Dependency composition and process lifecycle wiring remain in `/Users/zakklee/dev/dalil/src/main.ts` only.
 
 ## 4) OOP/FP Boundaries
@@ -79,6 +81,7 @@ src/
 - Logging/output is centralized via `shared/cli-io.ts`.
 - Config/data-dir resolution is centralized in `infrastructure/persistence/local-store.ts`.
 - Secrets are never printed; OpenAI key is only read from local secret store.
+- Architecture gate: `npm run arch:check` must pass before merge.
 - Build gate: `npm run build` must pass before merge.
 
 ## 6) Migration Plan

@@ -29,7 +29,7 @@ import {
   callOpenAiSuggestion,
   composeFallbackSuggestion,
   pickRelevantCitations,
-} from "../../../suggest/application/suggestion-generator";
+} from "../../../suggest";
 import { runnerRequest } from "../http/runner-server";
 
 interface TuiState {

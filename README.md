@@ -13,6 +13,7 @@ Dalil is a local-first CLI + Runner that drafts and fills `input`/`textarea` fie
 
 ```bash
 npm install
+npm run arch:check
 npm run build
 node dist/main.js init --data-dir /absolute/path/to/dalil-data
 node dist/main.js config set openai.key

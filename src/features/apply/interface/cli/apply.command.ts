@@ -12,7 +12,7 @@ import {
   resolveDataDir,
   saveHistory,
 } from "../../../../infrastructure/persistence/local-store";
-import { runnerRequest } from "../../../runner/interface/http/runner-server";
+import { runnerRequest } from "../../../runner";
 
 export async function cmdApply(rawArgs: string[], dataDirOverride?: string): Promise<void> {
   const args = [...rawArgs];

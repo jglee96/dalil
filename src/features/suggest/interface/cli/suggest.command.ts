@@ -13,7 +13,7 @@ import {
   resolveDataDir,
   saveSuggestions,
 } from "../../../../infrastructure/persistence/local-store";
-import { runnerRequest } from "../../../runner/interface/http/runner-server";
+import { runnerRequest } from "../../../runner";
 import {
   callOpenAiSuggestion,
   composeFallbackSuggestion,
