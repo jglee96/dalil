@@ -1,0 +1,7 @@
+홍길동
+Backend Engineer
+skills: TypeScript, Node.js, PostgreSQL, Redis
+- 결제 시스템 처리량 30% 개선
+- 대규모 트래픽 환경에서 장애율 40% 감소
+프로젝트: 지원 자동화 플랫폼 구축
+서울대학교 컴퓨터공학과

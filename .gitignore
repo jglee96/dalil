@@ -1,0 +1,4 @@
+node_modules/
+dist/
+.dalil-data/
+.dalil-global/
