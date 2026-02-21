@@ -22,6 +22,14 @@ src/
     persistence/
       local-store.ts
   features/
+    runner/
+      application/
+        field-operations.ts
+      interface/
+        cli/
+          runner-commands.ts
+        http/
+          runner-server.ts
     vault/
       application/
         profile-extraction.ts
@@ -53,7 +61,7 @@ src/
 
 ## 6) Migration Plan
 1. Completed: split monolithic helpers into `shared/`, `features/`, `infrastructure/` modules.
-2. Next: move runner HTTP handlers into `features/runner/interface/http` and `features/runner/application`.
+2. Completed: moved runner HTTP handlers and page field operations to `features/runner/interface/http` and `features/runner/application`.
 3. Next: split each CLI command into `features/*/interface/cli/*.command.ts`.
 4. Next: add architecture tests/lint rules for import direction.
 5. Later: optional package split (`packages/domain`, `packages/application`, `apps/cli-runner`) when team/scale grows.
