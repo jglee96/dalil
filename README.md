@@ -69,23 +69,23 @@ node dist/main.js apply <fieldId> --suggestion <suggestionId>
 | Setup | `dalil init --data-dir <path>` | 데이터 디렉토리 초기화 및 전역 config 등록 |
 | Setup | `dalil config set openai.key` | OpenAI API 키 저장(입력 프롬프트) |
 | Setup | `dalil doctor` | 환경 점검(경로 권한, 키 설정, Playwright, 편집기 등) |
-| Runner | `dalil run [--mode managed|attach] [--cdp <url>] [--port <n>] [--daemon]` | Runner 시작 및 TUI 진입 |
-| Vault | `dalil vault import <file...> [--type resume|portfolio|notes]` | 이력서/포트폴리오/노트 import 및 프로필 갱신 |
+| Runner | `dalil run [--mode managed/attach] [--cdp <url>] [--port <n>] [--daemon]` | Runner 시작 및 TUI 진입 |
+| Vault | `dalil vault import <file...> [--type resume/portfolio/notes]` | 이력서/포트폴리오/노트 import 및 프로필 갱신 |
 | Vault | `dalil vault status` | vault 요약 정보 확인 |
-| Fields | `dalil fields list [--format table|json]` | 현재 페이지 입력 필드 스캔 결과 조회 |
+| Fields | `dalil fields list [--format table/json]` | 현재 페이지 입력 필드 스캔 결과 조회 |
 | Fields | `dalil fields show <fieldId>` | 필드 상세 메타데이터 확인 |
 | Fields | `dalil fields highlight <fieldId>` | 브라우저에서 필드 하이라이트 |
-| Suggest | `dalil suggest <fieldId> [--variant concise|standard|impact] [--lang ko|en]` | 단일 필드 답변 초안 생성 |
+| Suggest | `dalil suggest <fieldId> [--variant concise/standard/impact] [--lang ko/en]` | 단일 필드 답변 초안 생성 |
 | Suggest | `dalil suggest --all [--variant ...] [--lang ...]` | 페이지 전체 필드 초안 생성 |
 | Suggest | `dalil suggest show <suggestionId> [--with-citations]` | 저장된 suggestion 조회 |
 | Apply | `dalil apply <fieldId> --suggestion <suggestionId>` | 저장된 suggestion을 필드에 반영 |
 | Apply | `dalil apply <fieldId> --text @-` | stdin 텍스트를 필드에 반영 |
 | Revert | `dalil revert <fieldId>` | 마지막 반영 내용 롤백 |
 | History | `dalil history list [--site <etld+1>] [--limit N]` | 반영 기록 목록 조회 |
-| History | `dalil history show <historyId> [--format text|json]` | 단일 기록 상세 조회 |
+| History | `dalil history show <historyId> [--format text/json]` | 단일 기록 상세 조회 |
 | History | `dalil history search <query>` | 라벨/사이트/본문 기준 기록 검색 |
-| Export | `dalil export resume --lang ko|en --template <id> --out <path.md>` | 이력서 Markdown export |
-| Export | `dalil export portfolio --lang ko|en --template <id> --out <path.md>` | 포트폴리오 Markdown export |
+| Export | `dalil export resume --lang ko/en --template <id> --out <path.md>` | 이력서 Markdown export |
+| Export | `dalil export portfolio --lang ko/en --template <id> --out <path.md>` | 포트폴리오 Markdown export |
 
 ## 자주 쓰는 옵션
 
