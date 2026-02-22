@@ -1,0 +1,95 @@
+name: Release macOS arm64
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag (e.g. v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Release (Apple Silicon)
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Resolve release tag and version
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            RELEASE_TAG="${{ inputs.release_tag }}"
+          else
+            RELEASE_TAG="${GITHUB_REF_NAME}"
+          fi
+
+          if [[ ! "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release tag: ${RELEASE_TAG}"
+            echo "Expected format: vMAJOR.MINOR.PATCH (optionally with pre-release/build suffix)."
+            exit 1
+          fi
+
+          VERSION="${RELEASE_TAG#v}"
+
+          echo "release_tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and checks
+        run: npm run check
+
+      - name: Package release artifact
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION="${{ steps.vars.outputs.version }}"
+          BUNDLE_DIR="dalil-${VERSION}-macos-arm64"
+          ARCHIVE_NAME="${BUNDLE_DIR}.tar.gz"
+          SHA_NAME="${ARCHIVE_NAME}.sha256"
+
+          mkdir -p "${BUNDLE_DIR}"
+          cp -R dist "${BUNDLE_DIR}/dist"
+          cp package.json "${BUNDLE_DIR}/package.json"
+          cp package-lock.json "${BUNDLE_DIR}/package-lock.json"
+          cp README.md "${BUNDLE_DIR}/README.md"
+          cp scripts/release/install.sh "${BUNDLE_DIR}/install.sh"
+          chmod +x "${BUNDLE_DIR}/install.sh"
+
+          tar -czf "${ARCHIVE_NAME}" "${BUNDLE_DIR}"
+          shasum -a 256 "${ARCHIVE_NAME}" > "${SHA_NAME}"
+
+          echo "archive_path=${PWD}/${ARCHIVE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "sha_path=${PWD}/${SHA_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.release_tag }}
+          target_commitish: ${{ github.sha }}
+          files: |
+            ${{ steps.package.outputs.archive_path }}
+            ${{ steps.package.outputs.sha_path }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
