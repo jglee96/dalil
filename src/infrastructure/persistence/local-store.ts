@@ -79,7 +79,7 @@ export function resolveDataDir(dataDirOverride?: string): string {
   const config = loadGlobalConfig();
   if (!config.dataDir) {
     throw new CliError(
-      "Data directory is not configured. Run `dalil init --data-dir <path>` first.",
+      "Data directory is not configured. Run `dalil setup init --data-dir <path>` first.",
       EXIT_ENV,
     );
   }

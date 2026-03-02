@@ -20,7 +20,7 @@ export async function cmdInit(rawArgs: string[], dataDirOverride?: string): Prom
   const args = [...rawArgs];
   const dataDirArg = takeOption(args, "--data-dir") ?? dataDirOverride;
   if (!dataDirArg) {
-    throw new CliError("`dalil init` requires `--data-dir <path>`.", EXIT_USAGE);
+    throw new CliError("`dalil setup init` requires `--data-dir <path>`.", EXIT_USAGE);
   }
   assertNoExtraArgs(args, "init");
   const dataDir = path.resolve(dataDirArg);
@@ -39,7 +39,7 @@ export async function cmdConfig(rawArgs: string[], dataDirOverride?: string): Pr
   const op = args.shift();
   const key = args.shift();
   if (op !== "set" || key !== "openai.key") {
-    throw new CliError("Usage: dalil config set openai.key", EXIT_USAGE);
+    throw new CliError("Usage: dalil setup config set openai.key", EXIT_USAGE);
   }
   assertNoExtraArgs(args, "config set openai.key");
   const dataDir = resolveDataDir(dataDirOverride);

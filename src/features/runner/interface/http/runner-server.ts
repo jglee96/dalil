@@ -263,14 +263,14 @@ export async function startRunnerServer(params: {
 export async function runnerRequest<T>(dataDir: string, endpoint: string, init?: RequestInit): Promise<T> {
   const conn = loadRunnerConnection(dataDir);
   if (!conn?.port) {
-    throw new CliError("Runner is not active. Start it with `dalil run`.", EXIT_ENV);
+    throw new CliError("Runner is not active. Start it with `dalil runner tui` or `dalil runner start`.", EXIT_ENV);
   }
   const url = `http://127.0.0.1:${conn.port}${endpoint}`;
   let res: Response;
   try {
     res = await fetch(url, init);
   } catch {
-    throw new CliError("Runner connection failed. Is `dalil run` still running?", EXIT_ENV);
+    throw new CliError("Runner connection failed. Is `dalil runner start` or `dalil runner tui` still running?", EXIT_ENV);
   }
   const payload = (await res.json()) as { ok: boolean; error?: string } & T;
   if (!res.ok || !payload.ok) {

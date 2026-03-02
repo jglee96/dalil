@@ -27,7 +27,7 @@ export async function cmdRun(rawArgs: string[], dataDirOverride?: string): Promi
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new CliError("`--port` must be an integer between 1 and 65535.", EXIT_USAGE);
   }
-  assertNoExtraArgs(args, "run");
+  assertNoExtraArgs(args, "runner start|tui");
 
   const dataDir = resolveDataDir(dataDirOverride);
   initializeDataDir(dataDir);
@@ -137,7 +137,7 @@ export async function cmdFields(rawArgs: string[], dataDirOverride?: string): Pr
   if (sub === "show") {
     const fieldId = args.shift();
     if (!fieldId) {
-      throw new CliError("Usage: dalil fields show <fieldId>", EXIT_USAGE);
+      throw new CliError("Usage: dalil runner fields show <fieldId>", EXIT_USAGE);
     }
     assertNoExtraArgs(args, "fields show");
     const fieldPayload = await runnerRequest<{ field: FormField }>(dataDir, `/field/${encodeURIComponent(fieldId)}`);
@@ -163,7 +163,7 @@ export async function cmdFields(rawArgs: string[], dataDirOverride?: string): Pr
   if (sub === "highlight") {
     const fieldId = args.shift();
     if (!fieldId) {
-      throw new CliError("Usage: dalil fields highlight <fieldId>", EXIT_USAGE);
+      throw new CliError("Usage: dalil runner fields highlight <fieldId>", EXIT_USAGE);
     }
     assertNoExtraArgs(args, "fields highlight");
     await runnerRequest(dataDir, "/highlight_field", {
@@ -175,14 +175,14 @@ export async function cmdFields(rawArgs: string[], dataDirOverride?: string): Pr
     return;
   }
 
-  throw new CliError("Usage: dalil fields list|show|highlight ...", EXIT_USAGE);
+  throw new CliError("Usage: dalil runner fields list|show|highlight ...", EXIT_USAGE);
 }
 
 export async function cmdRevert(rawArgs: string[], dataDirOverride?: string): Promise<void> {
   const args = [...rawArgs];
   const fieldId = args.shift();
   if (!fieldId) {
-    throw new CliError("Usage: dalil revert <fieldId>", EXIT_USAGE);
+    throw new CliError("Usage: dalil runner revert <fieldId>", EXIT_USAGE);
   }
   assertNoExtraArgs(args, "revert");
   const dataDir = resolveDataDir(dataDirOverride);
